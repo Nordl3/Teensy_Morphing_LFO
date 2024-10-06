@@ -32,7 +32,6 @@ This project is a versatile LFO module that generates four morphing analog wavef
 
 - **Switches**:
 
-  - **LFO/Audio Rate Mode Switch**: Selects between LFO and audio rate operation.
   - **Sync Disable Switch**: Disables the oscillator sync input.
 
 - **LED Indicators**:
@@ -44,7 +43,7 @@ This project is a versatile LFO module that generates four morphing analog wavef
 The provided code for the Teensy Morphing LFO project includes several key modules:
 
 - **Waveform Generation**: Utilizes lookup tables (LUTs) to generate various morphing waveforms.
-- **DAC Control**: Manages two DACs using the SPI interface to provide precise analog output for each waveform.
+- **DAC Control**: Manages two (MCP4822) DACs using the SPI interface to provide precise analog output for each waveform.
 - **Rate and Phase Control**: Implements rate and phase adjustments for each waveform, including voltage control for modulation purposes.
 
 ### Key Files
