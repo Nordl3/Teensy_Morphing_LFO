@@ -6,6 +6,9 @@
 
 This project is a versatile LFO module that generates four morphing analog waveforms along with a square wave output. It provides extensive voltage control capabilities and manual adjustments for each waveform, making it ideal for adding expressive modulation to your Eurorack system.
 
+Here's a YouTube Video showing the features:
+https://youtu.be/P-udbJKpJ5U
+
 ## Features
 
 - **Waveforms**: 4 analog morphing waveforms and 2 square waves.
