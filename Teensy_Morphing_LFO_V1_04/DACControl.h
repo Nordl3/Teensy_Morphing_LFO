@@ -1,20 +1,28 @@
 #ifndef DACCONTROL_H
 #define DACCONTROL_H
 
-#include <SPI.h>  // Include SPI library for DAC communication
+// include SPI library for DAC communication
+#include <SPI.h>
 
 class DACControl
 {
     public:
-        DACControl(int csPin1, int csPin2);  // Constructor: takes in the chip select pins for DAC1 and DAC2
-        void begin();                        // Initialize SPI and set up the DACs
-        void writeDAC(int dacNumber, int channel, uint16_t value);  // Write value to the DAC
+        // CONSTRUCTOR: take in cchip select pins for DAC1 and DAC2
+        DACControl(int csPin1, int csPin2);
+
+        // Initialise SPI and set up DACs
+        void begin();
+
+        // write value to DAC
+        void writeDAC(int dacNumber, int channel, uint16_t value);
 
     private:
-        int _csPin1;  // Chip Select pin for DAC1
-        int _csPin2;  // Chip Select pin for DAC2
+        // chip select pins for DACS
+        int _csPin1; // DAC1
+        int _csPin2; // DAC2
 
-        void selectDAC(int dacNumber);  // Helper function to select the correct DAC
+        // help function to select the correct DAC
+        void selectDAC(int dacNumber);
 };
 
 #endif  // DACCONTROL_H

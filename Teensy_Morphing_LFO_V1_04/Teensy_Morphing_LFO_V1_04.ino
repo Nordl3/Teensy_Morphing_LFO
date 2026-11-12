@@ -8,14 +8,14 @@ const int SQUARE_PIN = 14;
 // Pin for external sync/reset input
 const int SYNC_PIN = 2;  
 
-// Define DAC chip select pins
+// Define DAC chip select pin outputs
 const int CS_PIN_DAC1 = 7;
 const int CS_PIN_DAC2 = 8;
 
 // Instantiate the DACControl object
 DACControl dacControl(CS_PIN_DAC1, CS_PIN_DAC2);
 
-// Potentiometer pins for rate control
+// rate control pot input
 const int POT_RATE_PIN = A5;
 
 // Phase control potentiometer pins for each DAC output
@@ -45,6 +45,8 @@ volatile unsigned int currentLUTIndex = 0;  // Marked as volatile for ISR access
 const int maxDACValue = 3090;               // Correct max value for 12-bit DACs to avoid clipping
 
 // Interrupt service routine (ISR) for external sync/reset
+// could be changed to resestTriggered by itself
+
 void syncISR()
 {
     resetTriggered = true;  // Trigger reset when sync is detected
@@ -52,13 +54,15 @@ void syncISR()
 
 void setup()
 {
+    // begin serial monitor
     Serial.begin(9600);
 
     // Initialize pin modes
     pinMode(SQUARE_PIN, OUTPUT);
     pinMode(SYNC_PIN, INPUT);  // External sync/reset pin
 
-    dacControl.begin();  // Initialize the DACs using DACControl
+    // initialise DACs using DACControl
+    dacControl.begin();  
 
     // Attach the interrupt for the external sync/reset (trigger on rising edge)
     attachInterrupt(digitalPinToInterrupt(SYNC_PIN), syncISR, RISING);
@@ -66,10 +70,13 @@ void setup()
 
 void loop()
 {
+    // keep track of microseconds
     unsigned long currentMicros = micros();
 
-    // Read the potentiometer value for rate control
+    // analog read rate control pot input
     int potRateValue = analogRead(POT_RATE_PIN);
+
+    // float divide pot by 1023 to normalise it
     float normalizedPotValue = potRateValue / 1023.0;
 
     // Apply exponential scaling for smoother control
@@ -81,13 +88,13 @@ void loop()
     // Calculate the period in microseconds based on the current rate in Hertz
     unsigned long squarePeriod = (1.0 / currentRateHz) * 1000000;
 
-    // Read phase potentiometer values
+    // analog read phase potentiometer values
     int potPhaseValue_DACA1 = analogRead(POT_PHASE_PIN_DACA1);
     int potPhaseValue_DACA2 = analogRead(POT_PHASE_PIN_DACA2);
     int potPhaseValue_DACB1 = analogRead(POT_PHASE_PIN_DACB1);
     int potPhaseValue_DACB2 = analogRead(POT_PHASE_PIN_DACB2);
 
-    // Read morph potentiometer values for each DAC channel
+    // analog read morph potentiometer values for each DAC channel
     int potMorphValue_DACA1 = analogRead(POT_MORPH_PIN_DACA1);
     int potMorphValue_DACA2 = analogRead(POT_MORPH_PIN_DACA2);
     int potMorphValue_DACB1 = analogRead(POT_MORPH_PIN_DACB1);

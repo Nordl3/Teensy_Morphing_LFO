@@ -11,11 +11,27 @@
 ** DONE Allman spacing for DACControl.h
 ** DONE Allman spacing for DACControl.cpp
 ** DONE Allman spacing for Teensy_Morphing_LFO_v1_04.ino
+** DONE mildly improve comment structure in DACControl.h
+** DONE mildy improve comments structure DACControl.cpp
 
 * TODO TODO TASKS
-** TODO comment what the code is doing for all files
-** TODO make timings for digital reads independent from calculating waveforms
+** TODO make timings for digital reads independent from calculating waveforms (possible optimisation)
+** TODO improve comment structure for teensy_morping_lfo.ino
+** TODO research what is going on in update_waveforms
+** TODO start automated test suite (to save progress and quickly identify breaking changes)
+
 
 * IDEAS
-** the abbreviation LUT could just be lookup_table, instead of figuring out what it stands for
-** the comments in waveforms.h are the same as what it's named so may be removed
+** waveforms.h the abbreviation LUT could just be lookup_table, instead of figuring out what it stands for
+** waveforms.h comments are often the same as what it's named so may be removed
+** waveforms.h lookup table names are also abbreviated. rename them what they actually are
+** DACControl cspin, chip selector pin is abbreviated, change
+** DACControl::begin, the pins are set to high to disable them. Does that not activate them? research
+** DACControl::select remove tertiary operators. They are way more confusing than the equivalent if-else statement
+** DACControl::select if dacnumber1 = cspin1, and dacnumber2 = cspin2, then shouldn't these be coupled better?
+** DACControl::writeDAC (command) is pretty wild with bitwise operations. See if I can simplify it
+** DACControl::writeDAC look up what transfer16(command) does
+** DACControl::writeDAC has another (if dacNumber = 1, then cspin1, and if dacnumber =2, then use cspin2)
+** teensy_morphing_lfo.ino have input and output pins sectioned together
+** teensy_morphing_lfo.ino syncISR is a function that does one thing, could be removed
+** teensy_morphing_lfo.ino the serial monitor could not be included (possible optimisation)
