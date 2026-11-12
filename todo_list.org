@@ -1,0 +1,8 @@
+#+title: Todo List
+
+* DONE DONE TASKS
+** DONE create dev branch
+* TODO TODO TASKS
+** TODO Allman spacing (to make editing easier)
+** TODO comment what the code is doing for all files
+** TODO make timings for digital reads independent from calculating waveforms
