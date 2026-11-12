@@ -2,20 +2,20 @@
 #include "DACControl.h"  // Include the DACControl library
 #include "waveforms.h"   // Include the external LUTs
 
-// Pin for square wave output
+// square wave output pin
 const int SQUARE_PIN = 14;
 
-// Pin for external sync/reset input
+// external sync/reset input pin
 const int SYNC_PIN = 2;  
 
-// Define DAC chip select pin outputs
+// DAC chip select output pins
 const int CS_PIN_DAC1 = 7;
 const int CS_PIN_DAC2 = 8;
 
 // Instantiate the DACControl object
 DACControl dacControl(CS_PIN_DAC1, CS_PIN_DAC2);
 
-// rate control pot input
+// rate control input pot
 const int POT_RATE_PIN = A5;
 
 // Phase control potentiometer pins for each DAC output
@@ -46,7 +46,6 @@ const int maxDACValue = 3090;               // Correct max value for 12-bit DACs
 
 // Interrupt service routine (ISR) for external sync/reset
 // could be changed to resestTriggered by itself
-
 void syncISR()
 {
     resetTriggered = true;  // Trigger reset when sync is detected

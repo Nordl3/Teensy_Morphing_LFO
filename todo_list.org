@@ -17,9 +17,9 @@
 * TODO TODO TASKS
 ** TODO make timings for digital reads independent from calculating waveforms (possible optimisation)
 ** TODO improve comment structure for teensy_morping_lfo.ino
-** TODO research what is going on in update_waveforms
+** TODO research what is going on in update_waveforms in teensy_morping_lfo.ino
 ** TODO start automated test suite (to save progress and quickly identify breaking changes)
-
+** TODO begin slowly refactoring. A lot of main could be separate files (with separate automated testin)
 
 * IDEAS
 ** waveforms.h the abbreviation LUT could just be lookup_table, instead of figuring out what it stands for
@@ -35,3 +35,9 @@
 ** teensy_morphing_lfo.ino have input and output pins sectioned together
 ** teensy_morphing_lfo.ino syncISR is a function that does one thing, could be removed
 ** teensy_morphing_lfo.ino the serial monitor could not be included (possible optimisation)
+** consider removing DACControl as a concept. This might be a function disguised as a class.
+* PROGRAM_TIMELINE
+** SETUP
+turn on serial monitor
+initialise pins
+initial DAC pins (these are defined in .h file, I would prefer these to be passed)
