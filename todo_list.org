@@ -1,8 +1,21 @@
 #+title: Todo List
 
+* LOG
+** created Dev branch to keep completed code separate from developing code
+** Allman spacing introduced. I find it easier to read.
+
+
 * DONE DONE TASKS
 ** DONE create dev branch
+** DONE Allman spacing for waveforms.h
+** DONE Allman spacing for DACControl.h
+** DONE Allman spacing for DACControl.cpp
+** DONE Allman spacing for Teensy_Morphing_LFO_v1_04.ino
+
 * TODO TODO TASKS
-** TODO Allman spacing (to make editing easier)
 ** TODO comment what the code is doing for all files
 ** TODO make timings for digital reads independent from calculating waveforms
+
+* IDEAS
+** the abbreviation LUT could just be lookup_table, instead of figuring out what it stands for
+** the comments in waveforms.h are the same as what it's named so may be removed

@@ -61,8 +61,6 @@ const uint16_t rampUpLUT[LUT_SIZE] =
   3083, 3090
 };
 
-
-
 // Ramp-down LUT
 const uint16_t rampDownLUT[LUT_SIZE] = 
 {
@@ -119,8 +117,6 @@ const uint16_t rampDownLUT[LUT_SIZE] =
   66, 60, 54, 48, 42, 36, 30, 24, 18, 12,
   6, 0
 };
-
-
      
 // sine LUT
 const uint16_t sineLUT[LUT_SIZE] = 
@@ -179,8 +175,6 @@ const uint16_t sineLUT[LUT_SIZE] =
   0, 0
 };
 
-
-
 // Triangle LUT
 const uint16_t triangleLUT[LUT_SIZE] = 
 {
@@ -237,8 +231,6 @@ const uint16_t triangleLUT[LUT_SIZE] =
   144, 132, 120, 108, 96, 84, 72, 60, 48, 36,
   24, 12
 };
-
-
 
 // Exponential Rise LUT
 const uint16_t expoRiseLUT[LUT_SIZE] = 
@@ -297,7 +289,6 @@ const uint16_t expoRiseLUT[LUT_SIZE] =
   3060, 3090, 
 };
 
-
 // Exponential Fall LUT
 const uint16_t expoFallLUT[LUT_SIZE] = 
 {
@@ -354,7 +345,6 @@ const uint16_t expoFallLUT[LUT_SIZE] =
   2, 2, 2, 2, 1, 1, 1, 1, 1, 0, 
   0, 0, 
 };
-
 
 // Inverted Exponential Rise LUT
 const uint16_t invExpoRiseLUT[LUT_SIZE] = 
@@ -413,8 +403,6 @@ const uint16_t invExpoRiseLUT[LUT_SIZE] =
   3090, 3090, 
 };
 
-
-
 // Inverted Exponential Fall LUT
 const uint16_t invExpoFallLUT[LUT_SIZE] = 
 {
@@ -471,10 +459,6 @@ const uint16_t invExpoFallLUT[LUT_SIZE] =
   317, 290, 262, 234, 206, 177, 149, 119, 90, 60, 
   30, 0, 
 };
-
-
-
-
 
 // Wobble Ramp Down LUT
 const uint16_t wobRampDownLUT[LUT_SIZE] = 
@@ -533,7 +517,6 @@ const uint16_t wobRampDownLUT[LUT_SIZE] =
   1, 1
 };
 
-
 // Wobble Ramp Up LUT
 const uint16_t wobRampUpLUT[LUT_SIZE] = 
 {
@@ -590,8 +573,6 @@ const uint16_t wobRampUpLUT[LUT_SIZE] =
   2963, 2973, 2983, 2994, 3005, 3016, 3028, 3039, 3051, 3063,
   3075, 3087
 };
-
-
 
 // stepUp4 LUT
 const uint16_t stepUp4LUT[LUT_SIZE] = 
@@ -650,7 +631,6 @@ const uint16_t stepUp4LUT[LUT_SIZE] =
   3087, 3087
 };
 
-
 // stepDown4 LUT
 const uint16_t stepDown4LUT[LUT_SIZE] = 
 {
@@ -707,8 +687,5 @@ const uint16_t stepDown4LUT[LUT_SIZE] =
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
   2, 2
 };
-
-
-
 
 #endif

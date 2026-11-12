@@ -45,11 +45,13 @@ volatile unsigned int currentLUTIndex = 0;  // Marked as volatile for ISR access
 const int maxDACValue = 3090;               // Correct max value for 12-bit DACs to avoid clipping
 
 // Interrupt service routine (ISR) for external sync/reset
-void syncISR() {
+void syncISR()
+{
     resetTriggered = true;  // Trigger reset when sync is detected
 }
 
-void setup() {
+void setup()
+{
     Serial.begin(9600);
 
     // Initialize pin modes
@@ -62,7 +64,8 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(SYNC_PIN), syncISR, RISING);
 }
 
-void loop() {
+void loop()
+{
     unsigned long currentMicros = micros();
 
     // Read the potentiometer value for rate control
@@ -104,21 +107,24 @@ void updateWaveforms(
     unsigned long currentMicros,
     unsigned long squarePeriod,
     int potPhaseValue_DACA1, int potPhaseValue_DACA2, int potPhaseValue_DACB1, int potPhaseValue_DACB2,
-    int potMorphValue_DACA1, int potMorphValue_DACA2, int potMorphValue_DACB1, int potMorphValue_DACB2
-) {
+    int potMorphValue_DACA1, int potMorphValue_DACA2, int potMorphValue_DACB1, int potMorphValue_DACB2)
+{
     unsigned long stepSize = squarePeriod / LUT_SIZE;
-    if (stepSize == 0) {
+    if (stepSize == 0)
+    {
         stepSize = 1;  // Ensure a minimum step size
     }
 
     // Check for the sync reset trigger
-    if (resetTriggered) {
+    if (resetTriggered)
+    {
         // Reset all waveforms and the square wave
         currentLUTIndex = 0;
         resetTriggered = false;  // Clear the reset flag
     }
 
-    if (currentMicros - lastUpdate >= stepSize) {
+    if (currentMicros - lastUpdate >= stepSize)
+    {
         lastUpdate = currentMicros;
 
         // Invert the phase potentiometer values to fix reverse operation
@@ -152,11 +158,16 @@ void updateWaveforms(
         int rampLUTValue_DACB2;
         unsigned int lutIndex_DACB2_final = lutIndexWithPhase_DACB2;
 
-        if (rampUpLength_DACB2 > 0 && lutIndex_DACB2_final < rampUpLength_DACB2) {
+        if (rampUpLength_DACB2 > 0 && lutIndex_DACB2_final < rampUpLength_DACB2)
+        {
             rampLUTValue_DACB2 = (lutIndex_DACB2_final * maxDACValue) / rampUpLength_DACB2;
-        } else if ((LUT_SIZE - rampDownStart_DACB2) > 0) {
+        }
+        else if ((LUT_SIZE - rampDownStart_DACB2) > 0)
+        {
             rampLUTValue_DACB2 = maxDACValue - ((lutIndex_DACB2_final - rampDownStart_DACB2) * maxDACValue) / (LUT_SIZE - rampDownStart_DACB2);
-        } else {
+        }
+        else
+        {
             rampLUTValue_DACB2 = 0;
         }
 
@@ -198,10 +209,13 @@ void updateWaveforms(
         float scaledMorph_DACA1 = morphFactor_DACA1 * numTransitions;
         int section_DACA1 = (int)scaledMorph_DACA1;
         float localMorphFactor_DACA1;
-        if (section_DACA1 >= numTransitions) {
+        if (section_DACA1 >= numTransitions)
+        {
             section_DACA1 = numTransitions - 1;
             localMorphFactor_DACA1 = 1.0f;
-        } else {
+        }
+        else
+        {
             localMorphFactor_DACA1 = scaledMorph_DACA1 - section_DACA1;
         }
 
@@ -212,7 +226,8 @@ void updateWaveforms(
         dacControl.writeDAC(1, 0, morphedValue_DACA1);
 
         // Update the square wave output on the SQUARE_PIN
-        if (currentLUTIndex == 0 || currentLUTIndex == LUT_SIZE / 2) {
+        if (currentLUTIndex == 0 || currentLUTIndex == LUT_SIZE / 2)
+        {
             squareWaveState = !squareWaveState;
             digitalWrite(SQUARE_PIN, squareWaveState);
         }
