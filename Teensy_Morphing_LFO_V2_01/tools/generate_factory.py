@@ -7,7 +7,7 @@ from pathlib import Path
 import re, numpy as np
 ROOT=Path(__file__).resolve().parents[1]
 N=256; FRAMES=8; RATE=48000
-TOPS=[0,40,80,160,320,640,1280,2560,10240]
+TOPS=[0,40,80,160,320,640,1280,2560,10240,20000]
 SCENES=['Legacy Palette','Drawbar Harmonics','Interleaved Partials','Four-Band Spectrum',
         'Quadrature Orbit','Formant Choir','Reese Cluster','West Coast Fold']
 RATIOS=[(1,1,1,1),(.5,1,1.5,2),(1,1,1,1),(1,1,1,1),

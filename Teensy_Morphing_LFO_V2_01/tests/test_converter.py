@@ -8,7 +8,7 @@ import tempfile
 import zipfile
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'tools'))
-from convert_ultimate_bank import convert
+from convert_ultimate_bank import convert, only_fundamental
 
 def test():
     with tempfile.TemporaryDirectory() as temp:
@@ -40,5 +40,18 @@ def test():
         assert '{0, 80, 80, 320, 320, 10240, 10240, 10240, 10240}' in code
         assert 'USER_BANK_DATA[] PROGMEM' in code
         assert not any(int(x)>4095 for x in __import__('re').findall(r'\b\d+\b',code.split('USER_BANK_DATA[] PROGMEM')[1]))
-        print('PASS: Ultimate ZIP -> compact UserBank.h (4 channels, flash bounds, pitch bands, metadata)')
+        # Default conversion now includes a guaranteed clean 20 kHz one-harmonic band.
+        r=convert(zip_file,output,frames=8,samples=256)
+        assert r['bands']==10
+        assert r['bytes']==4*10*8*256*2
+        code=output.read_text()
+        assert 'USER_BANK_BANDS = 10' in code
+        assert code.split('USER_BANK_LIMITS[] = {')[1].split('}')[0].strip().endswith('20000')
+        # Confirm the reconstructed high-pitch band does not retain significant 2nd harmonics.
+        w=[2047 + 900*math.sin(2*math.pi*i/256) + 700*math.sin(4*math.pi*i/256) for i in range(256)]
+        a=only_fundamental(w)
+        assert max(a)<4096 and min(a)>=0
+        second=sum((v-2047)*math.sin(4*math.pi*i/256) for i,v in enumerate(a))
+        assert abs(second)<10.0
+        print('PASS: Ultimate ZIP -> 20 kHz safe four-channel wavetable, pitch bands, metadata')
 if __name__=='__main__':test()

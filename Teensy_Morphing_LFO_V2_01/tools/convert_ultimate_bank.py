@@ -17,7 +17,7 @@ import struct
 import sys
 import zipfile
 
-TARGET_TOPS = [0,40,80,160,320,640,1280,2560,10240]
+TARGET_TOPS = [0,40,80,160,320,640,1280,2560,10240,20000]
 MAX_USER_BYTES=380000
 
 def clamp(v,lo,hi): return max(lo,min(hi,v))
@@ -60,6 +60,23 @@ def choose_band(src_tops,target):
         if top is not None and top>=target:return i
     return max(0,len(src_tops)-1)
 
+def only_fundamental(codes):
+    """Retain DC and the first Fourier partial at the top 20 kHz pitch band.
+
+    At 48 kHz playback, the second harmonic of 20 kHz would alias. Apply
+    this irrespective of the source bank's published highest pitch band.
+    """
+    n = len(codes)
+    mean = sum(codes) / n
+    cos_term = 2.0 / n * sum((v - mean) * math.cos(2.0 * math.pi * i / n)
+                               for i, v in enumerate(codes))
+    sin_term = 2.0 / n * sum((v - mean) * math.sin(2.0 * math.pi * i / n)
+                               for i, v in enumerate(codes))
+    return [int(round(clamp(mean + cos_term * math.cos(2.0 * math.pi * i / n)
+                            + sin_term * math.sin(2.0 * math.pi * i / n), 0, 4095)))
+            for i in range(n)]
+
+
 def write_header(path, bank, ratios, phases, tops, frames, samples, code_max):
     nbytes=len(bank)*2
     if nbytes>MAX_USER_BYTES: raise ValueError(
@@ -81,10 +98,10 @@ def write_header(path, bank, ratios, phases, tops, frames, samples, code_max):
         f.write('};\n')
     return nbytes
 
-def convert(archive,output,frames=8,samples=256,bands=9):
+def convert(archive,output,frames=8,samples=256,bands=10):
     if samples not in (128,256,512,1024):raise ValueError('Samples must be 128, 256, 512 or 1024')
     if not 2<=frames<=32:raise ValueError('Frames must be between 2 and 32')
-    if not 1<=bands<=len(TARGET_TOPS):raise ValueError('Bands must be 1..9')
+    if not 1<=bands<=len(TARGET_TOPS):raise ValueError(f'Bands must be 1..{len(TARGET_TOPS)}')
     with zipfile.ZipFile(archive) as z:
         manifest=read_manifest(z)
         sf=int(manifest['frames']);ss=int(manifest['samples'])
@@ -98,7 +115,8 @@ def convert(archive,output,frames=8,samples=256,bands=9):
         requested=TARGET_TOPS[:bands]
         # Coarse conversion never labels a bank as narrower-band than the source.
         indices=[choose_band(src_tops,h) for h in requested]
-        tops=[0]+[int(src_tops[i]) if src_tops[i] is not None else 0 for i in indices[1:]]
+        tops=[0]+[20000 if target >= 20000 else int(src_tops[i])
+                  for target, i in zip(requested[1:], indices[1:])]
         bank=[];ratios=[];phases=[]
         for voice in manifest['voices']:
             path=voice['bin']; data=decode_u16(z.read(path))
@@ -110,14 +128,18 @@ def convert(archive,output,frames=8,samples=256,bands=9):
             ratios.append(clamp(ratio,.01,32))
             phase=float(voice.get('phase',0))
             phases.append(phase%1 if math.isfinite(phase) else 0)
-            for source_band in indices:
+            for target_band, source_band in zip(requested, indices):
                 for frame in range(frames):
                     pos=frame*(sf-1)/(frames-1)
+                    codes=[]
                     for i in range(samples):
                         raw=interpolate_frame(data,src_bands,sf,ss,source_band,pos,i,samples)
                         # Convert future 16-bit exports down to original 12-bit DAC.
                         code=round(clamp(raw,0,src_max)*4095/src_max)
-                        bank.append(int(clamp(code,0,4095)))
+                        codes.append(int(clamp(code,0,4095)))
+                    if target_band >= 20000:
+                        codes=only_fundamental(codes)
+                    bank.extend(codes)
     nbytes=write_header(output,bank,ratios,phases,tops,frames,samples,4095)
     return {'name':manifest.get('name'),'bytes':nbytes,'frames':frames,'samples':samples,
             'bands':bands,'source_bands':src_bands,'ratios':ratios}
@@ -128,7 +150,7 @@ def main():
     p.add_argument('-o','--output',type=Path,default=Path(__file__).resolve().parents[1]/'UserBank.h')
     p.add_argument('--frames',type=int,default=8)
     p.add_argument('--samples',type=int,default=256)
-    p.add_argument('--bands',type=int,default=9)
+    p.add_argument('--bands',type=int,default=10)
     args=p.parse_args()
     try:
         result=convert(args.zip,args.output,args.frames,args.samples,args.bands)

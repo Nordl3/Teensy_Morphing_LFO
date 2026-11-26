@@ -2,7 +2,7 @@
   Nordl3 - Teensy Morphing LFO / VCO 2.01
   Replaces time-stepped 512-entry playback with fixed-rate 32-bit DDS.
   Pin map is based on Teensy_Morphing_LFO_Final_V1.01 from GitHub.
-  First use: LFO mode. VCO 1V/oct requires calibration of actual analogue front-end.
+  First use: VCO mode (unless stored EEPROM mode overrides). 1V/oct requires calibration.
   No PSRAM, SD, new ADC, DMA, or panel wiring required.
 */
 #include <Arduino.h>
@@ -54,7 +54,7 @@ static uint32_t rootPhase = 0;
 static volatile uint8_t resetRequested = 0;
 static volatile uint32_t audioTicks = 0;
 
-static OperatingMode mode = MODE_LFO;
+static OperatingMode mode = MODE_VCO; // factory default; saved EEPROM mode takes precedence
 static uint8_t scene = 0;
 static float referenceHz = 110.0f;   // A2 for 0V after calibration
 static float cvZero = 0, cvOne = 0;  // raw ADC values measured at 0V and 1V
@@ -171,8 +171,10 @@ static float readPitchHz() {
     float volts=constrain((cv-cvZero)/(cvOne-cvZero),-8.0f,10.0f);
     return constrain(referenceHz*exp2f(volts),VCO_MIN_HZ,VCO_MAX_HZ);
   }
-  // Safe uncalibrated pitch-preview mode; NOT a 1V/oct relationship.
-  return 20.0f*powf(100.0f,cv/(float)ADC_MAX_CODE);
+  // Uncalibrated 20 Hz..20 kHz logarithmic sweep; NOT 1V/oct.
+  // The hardware RATE/CV network may prevent the ADC reaching both endpoints.
+  const float u = cv / (float)ADC_MAX_CODE;
+  return VCO_PREVIEW_MIN_HZ * powf(VCO_PREVIEW_MAX_HZ / VCO_PREVIEW_MIN_HZ, u);
 }
 static uint32_t stepFromHz(float hz) {
   hz = constrain(hz,0.0f,VCO_MAX_HZ);
@@ -296,6 +298,8 @@ static void printStatus() {
   noInterrupts();uint32_t ticks=audioTicks;interrupts();
   Serial.print("Audio ticks since boot: ");Serial.println(ticks);
   Serial.print("AUDIO_SAMPLE_RATE: ");Serial.println(AUDIO_SAMPLE_RATE);
+  Serial.print("VCO limit Hz: ");Serial.println(VCO_MAX_HZ,0);
+  if(!cvCalibrated()) Serial.println("Preview pitch: nominal 20..20000 Hz (uncalibrated, non-1V/oct)");
 }
 static void printHelp() {
   Serial.println("help | status | list | mode lfo | mode vco | scene N");
